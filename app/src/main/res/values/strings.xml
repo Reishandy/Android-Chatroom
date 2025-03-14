@@ -3,15 +3,27 @@
     <string name="login">LOGIN</string>
     <string name="register">REGISTER</string>
     <string name="verify">VERIFY</string>
+
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="verification_code">Verification Code</string>
+
     <string name="send">Send</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="have_account">Already have an account?</string>
     <string name="resend_now">Resend verification code</string>
     <string name="resend">Resend in %d seconds</string>
     <string name="sent_to">"Verification code has been sent to: %s"</string>
+
+    <string name="email_error_validation">"Email is not valid"</string>
+    <string name="email_error_not_found">"User not found"</string>
+    <string name="email_error_registered">"Email is already registered"</string>
+    <string name="password_error_validation">"Password must be at least 8 characters long"</string>
+    <string name="password_error_invalid">"Invalid password"</string>
+    <string name="password_error_not_match">"Passwords do not match"</string>
+    <string name="username_error_validation">"Username must be at least 3 characters long"</string>
+    <string name="verification_code_error_validation">"Verification code must be 6 digit long"</string>
+    <string name="verification_code_error_invalid">"Invalid verification code"</string>
 </resources>

@@ -1,18 +1,13 @@
 package com.reishandy.chatroom.ui.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -27,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,15 +46,16 @@ import com.reishandy.chatroom.R
 import com.reishandy.chatroom.ui.theme.ChatroomTheme
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun Login(
     modifier: Modifier = Modifier,
     emailValue: String,
     onEmailValueChange: (String) -> Unit,
+    @StringRes  emailLabel: Int,
     isEmailError: Boolean,
     passwordValue: String,
     onPasswordValueChange: (String) -> Unit,
+    @StringRes passwordLabel: Int,
     isPasswordError: Boolean,
     onLoginClick: () -> Unit,
     onChangeToRegisterClick: () -> Unit
@@ -72,7 +67,7 @@ fun Login(
             CorrectOutlinedTextFields(
                 value = emailValue,
                 onValueChange = onEmailValueChange,
-                label = R.string.email,
+                label = emailLabel,
                 icon = Icons.Outlined.AlternateEmail,
                 iconDescription = R.string.email,
                 isError = isEmailError,
@@ -82,7 +77,7 @@ fun Login(
             CorrectOutlinedTextFields(
                 value = passwordValue,
                 onValueChange = onPasswordValueChange,
-                label = R.string.password,
+                label = passwordLabel,
                 icon = Icons.Outlined.Key,
                 iconDescription = R.string.password,
                 isError = isPasswordError,
@@ -94,27 +89,31 @@ fun Login(
             ButtonComplex(
                 primaryText = R.string.send,
                 onPrimaryClick = onLoginClick,
-                secondaryText = R.string.have_account,
+                secondaryText = R.string.dont_have_account,
                 onSecondaryClick = onChangeToRegisterClick
             )
         }
     )
 }
 
-
 @Composable
 fun Register(
     modifier: Modifier = Modifier,
     usernameValue: String,
     onUsernameValueChange: (String) -> Unit,
+    @StringRes usernameLabel: Int,
+    isUsernameError: Boolean,
     emailValue: String,
     onEmailValueChange: (String) -> Unit,
+    @StringRes emailLabel: Int,
     isEmailError: Boolean,
     passwordValue: String,
     onPasswordValueChange: (String) -> Unit,
+    @StringRes passwordLabel: Int,
     isPasswordError: Boolean,
     confirmPasswordValue: String,
     onConfirmPasswordValueChange: (String) -> Unit,
+    @StringRes confirmPasswordLabel: Int,
     isConfirmPasswordError: Boolean,
     onRegisterClick: () -> Unit,
     onChangeToLoginClick: () -> Unit
@@ -126,16 +125,17 @@ fun Register(
             CorrectOutlinedTextFields(
                 value = usernameValue,
                 onValueChange = onUsernameValueChange,
-                label = R.string.username,
+                label = usernameLabel,
                 icon = Icons.Outlined.AccountCircle,
                 iconDescription = R.string.username,
+                isError = isUsernameError,
                 imeAction = ImeAction.Next
             )
 
             CorrectOutlinedTextFields(
                 value = emailValue,
                 onValueChange = onEmailValueChange,
-                label = R.string.email,
+                label = emailLabel,
                 icon = Icons.Outlined.AlternateEmail,
                 iconDescription = R.string.email,
                 isError = isEmailError,
@@ -145,7 +145,7 @@ fun Register(
             CorrectOutlinedTextFields(
                 value = passwordValue,
                 onValueChange = onPasswordValueChange,
-                label = R.string.password,
+                label = passwordLabel,
                 icon = Icons.Outlined.Key,
                 iconDescription = R.string.password,
                 isError = isPasswordError,
@@ -156,7 +156,7 @@ fun Register(
             CorrectOutlinedTextFields(
                 value = confirmPasswordValue,
                 onValueChange = onConfirmPasswordValueChange,
-                label = R.string.confirm_password,
+                label = confirmPasswordLabel,
                 icon = Icons.Outlined.Key,
                 iconDescription = R.string.confirm_password,
                 isError = isConfirmPasswordError,
@@ -175,18 +175,19 @@ fun Register(
     )
 }
 
-
 @Composable
 fun Verify(
     modifier: Modifier = Modifier,
     emailSentTo: String,
     verificationCodeValue: String,
     onVerificationCodeValueChange: (String) -> Unit,
+    @StringRes verificationCodeLabel: Int,
+    isVerificationCodeError: Boolean,
     onVerifyClick: () -> Unit,
     onResendClick: () -> Unit
 ) {
-    var countdown by remember { mutableIntStateOf(60) }
-    var isResendEnabled by remember { mutableStateOf(false) }
+    var countdown: Int by remember { mutableIntStateOf(60) }
+    var isResendEnabled: Boolean by remember { mutableStateOf(false) }
 
     LaunchedEffect(countdown) {
         if (countdown > 0) {
@@ -211,10 +212,10 @@ fun Verify(
             CorrectOutlinedTextFields(
                 value = verificationCodeValue,
                 onValueChange = onVerificationCodeValueChange,
-                label = R.string.verification_code,
+                label = verificationCodeLabel,
                 icon = Icons.Outlined.Pin,
                 iconDescription = R.string.verification_code,
-                isError = false,
+                isError = isVerificationCodeError,
                 imeAction = ImeAction.Done
             )
         },
@@ -242,11 +243,10 @@ fun Verify(
     )
 }
 
-
 @Composable
 fun AuthenticationWrapper(
     modifier: Modifier = Modifier,
-    title: Int,
+    @StringRes title: Int,
     textFields: @Composable (() -> Unit),
     buttons: @Composable (() -> Unit)
 ) {
@@ -284,13 +284,12 @@ fun AuthenticationWrapper(
     }
 }
 
-
 @Composable
 fun ButtonComplex(
     modifier: Modifier = Modifier,
-    primaryText: Int,
+    @StringRes primaryText: Int,
     onPrimaryClick: () -> Unit,
-    secondaryText: Int,
+    @StringRes secondaryText: Int,
     onSecondaryClick: () -> Unit,
     isSecondaryEnabled: Boolean = true,
     countdown: Int = 0
@@ -324,20 +323,19 @@ fun ButtonComplex(
     }
 }
 
-
 @Composable
 fun CorrectOutlinedTextFields(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    label: Int,
+    @StringRes label: Int,
     icon: ImageVector,
-    iconDescription: Int,
+    @StringRes iconDescription: Int,
     isError: Boolean = false,
     imeAction: ImeAction,
     isPassword: Boolean = false
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordVisible: Boolean by remember { mutableStateOf(false) }
 
     OutlinedTextField(
         value = value,
@@ -385,7 +383,6 @@ fun CorrectOutlinedTextFields(
     )
 }
 
-
 @Preview
 @Composable
 fun AuthenticationMainPreview() {
@@ -395,9 +392,11 @@ fun AuthenticationMainPreview() {
                 Login(
                     emailValue = "",
                     onEmailValueChange = {},
+                    emailLabel = R.string.email,
                     isEmailError = false,
                     passwordValue = "",
                     onPasswordValueChange = {},
+                    passwordLabel = R.string.password,
                     isPasswordError = false,
                     onLoginClick = {},
                     onChangeToRegisterClick = {},
@@ -408,14 +407,19 @@ fun AuthenticationMainPreview() {
                 Register(
                     usernameValue = "",
                     onUsernameValueChange = {},
+                    usernameLabel = R.string.username,
+                    isUsernameError = false,
                     emailValue = "",
                     onEmailValueChange = {},
+                    emailLabel = R.string.email,
                     isEmailError = false,
                     passwordValue = "",
                     onPasswordValueChange = {},
+                    passwordLabel = R.string.password,
                     isPasswordError = false,
                     confirmPasswordValue = "",
                     onConfirmPasswordValueChange = {},
+                    confirmPasswordLabel = R.string.confirm_password,
                     isConfirmPasswordError = false,
                     onRegisterClick = {},
                     onChangeToLoginClick = {}
@@ -427,6 +431,8 @@ fun AuthenticationMainPreview() {
                     emailSentTo = "example@example.com",
                     verificationCodeValue = "",
                     onVerificationCodeValueChange = {},
+                    verificationCodeLabel = R.string.verification_code,
+                    isVerificationCodeError = false,
                     onVerifyClick = {},
                     onResendClick = {}
                 )

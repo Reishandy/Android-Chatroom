@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">Chatroom</string>
+    <string name="app_name">Rei\'s Chatroom</string>
+    <string name="login">LOGIN</string>
+    <string name="register">REGISTER</string>
+    <string name="verify">VERIFY</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="send">Send</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="resend_now">Resend verification code</string>
+    <string name="resend">Resend in %d seconds</string>
+    <string name="sent_to">"Verification code has been sent to: %s"</string>
 </resources>

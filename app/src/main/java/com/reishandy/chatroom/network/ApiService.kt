@@ -1,53 +1,33 @@
 package com.reishandy.chatroom.network
 
+import com.reishandy.chatroom.data.LoginBody
+import com.reishandy.chatroom.data.LoginResponse
+import com.reishandy.chatroom.data.RegisterBody
+import com.reishandy.chatroom.data.Response
+import com.reishandy.chatroom.data.VerifyBody
 import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiService {
     @POST("/register")
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json"
+    )
     suspend fun register(@Body body: RegisterBody): Response
 
     @POST("/verify")
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json"
+    )
     suspend fun verify(@Body body: VerifyBody): Response
 
     @POST("/login")
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json"
+    )
     suspend fun login(@Body body: LoginBody): LoginResponse
 }
-
-// Body
-data class RegisterBody(
-    val email: String,
-    val password: String,
-    val username: String
-)
-
-data class VerifyBody(
-    val email: String,
-    val code: String
-)
-
-data class LoginBody(
-    val email: String,
-    val password: String
-)
-
-// Response
-data class ErrorResponse(
-    val message: String
-)
-
-data class Response(
-    val message: String
-)
-
-data class TokensResponse(
-    val access_token: String,
-    val refresh_token: String,
-    val type: String
-)
-
-data class LoginResponse(
-    val message: String,
-    val tokens: TokensResponse,
-    val user_id: String
-)

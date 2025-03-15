@@ -1,4 +1,4 @@
-package com.reishandy.chatroom.model
+package com.reishandy.chatroom.data
 
 import androidx.annotation.StringRes
 import com.reishandy.chatroom.R
@@ -8,6 +8,8 @@ data class LoginUiState(
     val isEmailError: Boolean = false,
     @StringRes val passwordLabel: Int = R.string.password,
     val isPasswordError: Boolean = false,
+    val isLoading: Boolean = false,
+    val generalError: String? = null
 )
 
 data class RegisterUiState(
@@ -19,12 +21,16 @@ data class RegisterUiState(
     val isPasswordError: Boolean = false,
     @StringRes val confirmPasswordLabel: Int = R.string.confirm_password,
     val isConfirmPasswordError: Boolean = false,
+    val isLoading: Boolean = false,
+    val generalError: String? = null
 )
 
 data class VerifyUiState(
     val mailSentTo: String = "",
     @StringRes val verificationCodeLabel: Int = R.string.verification_code,
     val isVerificationCodeError: Boolean = false,
+    val isLoading: Boolean = false,
+    val generalError: String? = null
 )
 
 data class ChangeUiState(
@@ -38,4 +44,8 @@ data class ChangeUiState(
     val isNewPasswordError: Boolean = false,
     @StringRes val confirmPasswordLabel: Int = R.string.confirm_password,
     val isConfirmPasswordError: Boolean = false,
+    val isUsernameLoading: Boolean = false,
+    val isPasswordLoading: Boolean = false,
+    val usernameGeneralError: String? = null,
+    val passwordGeneralError: String? = null
 )

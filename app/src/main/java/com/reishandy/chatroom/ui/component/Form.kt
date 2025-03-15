@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.outlined.Pin
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.reishandy.chatroom.R
 import com.reishandy.chatroom.ui.theme.ChatroomTheme
 import kotlinx.coroutines.delay
@@ -62,7 +65,9 @@ fun Password(
     @StringRes confirmPasswordLabel: Int,
     isConfirmPasswordError: Boolean,
     onChangePasswordClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    isLoading: Boolean,
+    generalError: String?
 ) {
     Wrapper(
         modifier = modifier,
@@ -74,6 +79,16 @@ fun Password(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
+
+            if (generalError != null) {
+                Text(
+                    text = generalError,
+                    modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
             CorrectOutlinedTextFields(
                 value = oldPasswordValue,
@@ -113,7 +128,8 @@ fun Password(
                 primaryText = R.string.confirm,
                 onPrimaryClick = onChangePasswordClick,
                 secondaryText = R.string.cancel,
-                onSecondaryClick = onCancelClick
+                onSecondaryClick = onCancelClick,
+                isLoading = isLoading
             )
         }
     )
@@ -127,7 +143,9 @@ fun Username(
     @StringRes usernameLabel: Int,
     isUsernameError: Boolean,
     onChangeUsernameClick: () -> Unit,
-    onCancelClick: () -> Unit
+    onCancelClick: () -> Unit,
+    isLoading: Boolean,
+    generalError: String?
 ) {
     Wrapper(
         modifier = modifier,
@@ -139,6 +157,16 @@ fun Username(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
+
+            if (generalError != null) {
+                Text(
+                    text = generalError,
+                    modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
             CorrectOutlinedTextFields(
                 value = usernameValue,
@@ -155,7 +183,8 @@ fun Username(
                 primaryText = R.string.confirm,
                 onPrimaryClick = onChangeUsernameClick,
                 secondaryText = R.string.cancel,
-                onSecondaryClick = onCancelClick
+                onSecondaryClick = onCancelClick,
+                isLoading = isLoading
             )
         }
     )
@@ -173,12 +202,24 @@ fun Login(
     @StringRes passwordLabel: Int,
     isPasswordError: Boolean,
     onLoginClick: () -> Unit,
-    onChangeToRegisterClick: () -> Unit
+    onChangeToRegisterClick: () -> Unit,
+    isLoading: Boolean,
+    generalError: String?
 ) {
     Wrapper(
         modifier = modifier,
         title = R.string.login_title,
         textFields = {
+            if (generalError != null) {
+                Text(
+                    text = generalError,
+                    modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             CorrectOutlinedTextFields(
                 value = emailValue,
                 onValueChange = onEmailValueChange,
@@ -205,7 +246,8 @@ fun Login(
                 primaryText = R.string.send,
                 onPrimaryClick = onLoginClick,
                 secondaryText = R.string.dont_have_account,
-                onSecondaryClick = onChangeToRegisterClick
+                onSecondaryClick = onChangeToRegisterClick,
+                isLoading = isLoading
             )
         }
     )
@@ -231,12 +273,24 @@ fun Register(
     @StringRes confirmPasswordLabel: Int,
     isConfirmPasswordError: Boolean,
     onRegisterClick: () -> Unit,
-    onChangeToLoginClick: () -> Unit
+    onChangeToLoginClick: () -> Unit,
+    isLoading: Boolean,
+    generalError: String?
 ) {
     Wrapper(
         modifier = modifier,
         title = R.string.register_title,
         textFields = {
+            if (generalError != null) {
+                Text(
+                    text = generalError,
+                    modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             CorrectOutlinedTextFields(
                 value = usernameValue,
                 onValueChange = onUsernameValueChange,
@@ -284,7 +338,8 @@ fun Register(
                 primaryText = R.string.send,
                 onPrimaryClick = onRegisterClick,
                 secondaryText = R.string.have_account,
-                onSecondaryClick = onChangeToLoginClick
+                onSecondaryClick = onChangeToLoginClick,
+                isLoading = isLoading
             )
         }
     )
@@ -299,7 +354,9 @@ fun Verify(
     @StringRes verificationCodeLabel: Int,
     isVerificationCodeError: Boolean,
     onVerifyClick: () -> Unit,
-    onResendClick: () -> Unit
+    onResendClick: () -> Unit,
+    isLoading: Boolean,
+    generalError: String?
 ) {
     var countdown: Int by remember { mutableIntStateOf(60) }
     var isResendEnabled: Boolean by remember { mutableStateOf(false) }
@@ -323,6 +380,16 @@ fun Verify(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
+
+            if (generalError != null) {
+                Text(
+                    text = generalError,
+                    modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
             CorrectOutlinedTextFields(
                 value = verificationCodeValue,
@@ -348,9 +415,8 @@ fun Verify(
                         countdown = 60
                         isResendEnabled = false
                     }
-
-                    onResendClick()
                 },
+                isLoading = isLoading,
                 isSecondaryEnabled = isResendEnabled,
                 countdown = countdown
             )
@@ -406,6 +472,7 @@ fun ButtonComplex(
     onPrimaryClick: () -> Unit,
     @StringRes secondaryText: Int,
     onSecondaryClick: () -> Unit,
+    isLoading: Boolean,
     isSecondaryEnabled: Boolean = true,
     countdown: Int = 0
 ) {
@@ -419,9 +486,18 @@ fun ButtonComplex(
             onClick = onPrimaryClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+            enabled = !isLoading
         ) {
-            Text(stringResource(primaryText))
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(stringResource(primaryText))
+            }
         }
 
         TextButton(
@@ -518,7 +594,9 @@ fun AuthenticationMainPreview() {
                     confirmPasswordLabel = R.string.confirm_password,
                     isConfirmPasswordError = false,
                     onChangePasswordClick = {},
-                    onCancelClick = {}
+                    onCancelClick = {},
+                    isLoading = false,
+                    generalError = null
                 )
             }
 
@@ -529,7 +607,9 @@ fun AuthenticationMainPreview() {
                     usernameLabel = R.string.username,
                     isUsernameError = false,
                     onChangeUsernameClick = {},
-                    onCancelClick = {}
+                    onCancelClick = {},
+                    isLoading = false,
+                    generalError = null
                 )
             }
 
@@ -545,6 +625,8 @@ fun AuthenticationMainPreview() {
                     isPasswordError = false,
                     onLoginClick = {},
                     onChangeToRegisterClick = {},
+                    isLoading = false,
+                    generalError = null
                 )
             }
 
@@ -567,7 +649,9 @@ fun AuthenticationMainPreview() {
                     confirmPasswordLabel = R.string.confirm_password,
                     isConfirmPasswordError = false,
                     onRegisterClick = {},
-                    onChangeToLoginClick = {}
+                    onChangeToLoginClick = {},
+                    isLoading = false,
+                    generalError = null
                 )
             }
 
@@ -579,7 +663,9 @@ fun AuthenticationMainPreview() {
                     verificationCodeLabel = R.string.verification_code,
                     isVerificationCodeError = false,
                     onVerifyClick = {},
-                    onResendClick = {}
+                    onResendClick = {},
+                    isLoading = false,
+                    generalError = null
                 )
             }
         }

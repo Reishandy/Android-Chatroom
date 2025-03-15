@@ -6,14 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.AndroidViewModel
-import com.reishandy.chatroom.model.RegisterUiState
+import androidx.lifecycle.viewModelScope
+import com.reishandy.chatroom.data.RegisterUiState
 import com.reishandy.chatroom.R
+import com.reishandy.chatroom.data.ApiResponseStatus
+import com.reishandy.chatroom.data.ApiResponseWrapper
+import com.reishandy.chatroom.network.ApiServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+class RegisterViewModel(
+    application: Application,
+    private val apiRepository: ApiServiceRepository = ApiServiceRepository()
+) : AndroidViewModel(application) {
     private val _uiState: MutableStateFlow<RegisterUiState> = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
@@ -57,12 +65,57 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     // Main Flow
-    fun register(): Boolean {
+    suspend fun register(): Boolean {
         if (!validateUsername() or !validateEmail() or !validatePassword() or !validateConfirmPassword()) return false
 
-        // TODO: Implement register logic
+        _uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
 
-        return true
+        val response: ApiResponseWrapper<String> = apiRepository.register(email, password, username)
+
+        when (response.status) {
+            ApiResponseStatus.SUCCESS -> {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+                return true
+            }
+
+            ApiResponseStatus.EMAIL_ERROR -> {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        emailLabel = R.string.email_error_registered,
+                        isEmailError = true
+                    )
+                }
+                return false
+            }
+
+            ApiResponseStatus.ERROR -> {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        generalError = response.error
+                    )
+                }
+                return false
+            }
+
+            else -> {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                    )
+                }
+                return false
+            }
+        }
     }
 
     // Helper

@@ -6,13 +6,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.reishandy.chatroom.R
-import com.reishandy.chatroom.model.ChangeUiState
+import com.reishandy.chatroom.data.ChangeUiState
+import com.reishandy.chatroom.network.ApiServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ChangeViewModel(application: Application) : AndroidViewModel(application) {
+class ChangeViewModel(
+    application: Application,
+    private val apiRepository: ApiServiceRepository = ApiServiceRepository()
+) : AndroidViewModel(application) {
     private val _uiState: MutableStateFlow<ChangeUiState> = MutableStateFlow(ChangeUiState())
     val uiState: StateFlow<ChangeUiState> = _uiState.asStateFlow()
 

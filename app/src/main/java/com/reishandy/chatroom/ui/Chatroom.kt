@@ -22,28 +22,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.reishandy.chatroom.model.ChangeUiState
-import com.reishandy.chatroom.factory.LoginViewModelFactory
+import com.reishandy.chatroom.data.ChangeUiState
 import com.reishandy.chatroom.model.account.LoginViewModel
 import com.reishandy.chatroom.ui.component.Login
 import com.reishandy.chatroom.ui.component.Register
 import com.reishandy.chatroom.ui.component.Verify
-import com.reishandy.chatroom.model.LoginUiState
-import com.reishandy.chatroom.model.RegisterUiState
-import com.reishandy.chatroom.model.VerifyUiState
-import com.reishandy.chatroom.factory.ChangeViewModelFactory
-import com.reishandy.chatroom.factory.RegisterViewModelFactory
-import com.reishandy.chatroom.factory.VerifyViewModelFactory
+import com.reishandy.chatroom.data.LoginUiState
+import com.reishandy.chatroom.data.RegisterUiState
+import com.reishandy.chatroom.data.VerifyUiState
+import com.reishandy.chatroom.factory.ViewModelFactory
 import com.reishandy.chatroom.model.account.ChangeViewModel
 import com.reishandy.chatroom.model.account.RegisterViewModel
 import com.reishandy.chatroom.model.account.VerifyViewModel
 import com.reishandy.chatroom.ui.component.Password
 import com.reishandy.chatroom.ui.component.Username
+import kotlinx.coroutines.launch
 
 enum class ChatroomNavItems {
     LOGIN,
@@ -58,14 +57,17 @@ fun ChatroomApp() {
     val application: Application = context.applicationContext as Application
 
     // ViewModels
-    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(application))
+    val factory: ViewModelFactory = ViewModelFactory(application)
+
+    val loginViewModel: LoginViewModel = viewModel(factory = factory)
+    val registerViewModel: RegisterViewModel = viewModel(factory = factory)
+    val verifyViewModel: VerifyViewModel = viewModel(factory = factory)
+    val changeViewModel: ChangeViewModel = viewModel(factory = factory)
+
+    // UI State
     val loginUiState: LoginUiState by loginViewModel.uiState.collectAsState()
-    val registerViewModel: RegisterViewModel =
-        viewModel(factory = RegisterViewModelFactory(application))
     val registerUiState: RegisterUiState by registerViewModel.uiState.collectAsState()
-    val verifyViewModel: VerifyViewModel = viewModel(factory = VerifyViewModelFactory(application))
     val verifyUiState: VerifyUiState by verifyViewModel.uiState.collectAsState()
-    val changeViewModel: ChangeViewModel = viewModel(factory = ChangeViewModelFactory(application))
     val changeUiState: ChangeUiState by changeViewModel.uiState.collectAsState()
 
     // Navigation
@@ -155,14 +157,20 @@ fun NavPoints(
                 passwordLabel = loginUiState.passwordLabel,
                 isPasswordError = loginUiState.isPasswordError,
                 onLoginClick = {
-                    if (loginViewModel.login()) {
-                        loginViewModel.clearFields()
-                        navController.navigate(ChatroomNavItems.HOME.name)
+                    loginViewModel.viewModelScope.launch {
+                        if (loginViewModel.login()) {
+                            // TODO: Store token and user info
+
+                            loginViewModel.clearFields()
+                            navController.navigate(ChatroomNavItems.HOME.name)
+                        }
                     }
                 },
                 onChangeToRegisterClick = {
                     navController.navigate(ChatroomNavItems.REGISTER.name)
                 },
+                isLoading = loginUiState.isLoading,
+                generalError = loginUiState.generalError
             )
         }
 
@@ -210,14 +218,18 @@ fun NavPoints(
                 confirmPasswordLabel = registerUiState.confirmPasswordLabel,
                 isConfirmPasswordError = registerUiState.isConfirmPasswordError,
                 onRegisterClick = {
-                    if (registerViewModel.register()) {
-                        verifyViewModel.updateMailSentTo(registerViewModel.email)
-                        navController.navigate(ChatroomNavItems.VERIFY.name)
+                    registerViewModel.viewModelScope.launch {
+                        if (registerViewModel.register()) {
+                            verifyViewModel.updateMailSentTo(registerViewModel.email)
+                            navController.navigate(ChatroomNavItems.VERIFY.name)
+                        }
                     }
                 },
                 onChangeToLoginClick = {
                     navController.navigate(ChatroomNavItems.LOGIN.name)
-                }
+                },
+                isLoading = registerUiState.isLoading,
+                generalError = registerUiState.generalError
             )
         }
 
@@ -254,22 +266,28 @@ fun NavPoints(
                 verificationCodeLabel = verifyUiState.verificationCodeLabel,
                 isVerificationCodeError = verifyUiState.isVerificationCodeError,
                 onVerifyClick = {
-                    if (verifyViewModel.verify()) {
-                        // Clear both register and verify fields
-                        registerViewModel.clearFields()
-                        verifyViewModel.clearFields()
+                    verifyViewModel.viewModelScope.launch {
+                        if (verifyViewModel.verify()) {
+                            // Clear both register and verify fields
+                            registerViewModel.clearFields()
+                            verifyViewModel.clearFields()
 
-                        // Navigate to login, and clear the back stack
-                        navController.navigate(ChatroomNavItems.LOGIN.name) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                            // Navigate to login, and clear the back stack
+                            navController.navigate(ChatroomNavItems.LOGIN.name) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
                             }
                         }
                     }
                 },
                 onResendClick = {
-                    verifyViewModel.resendVerificationCode()
-                }
+                    registerViewModel.viewModelScope.launch {
+                        registerViewModel.register()
+                    }
+                },
+                isLoading = verifyUiState.isLoading,
+                generalError = verifyUiState.generalError
             )
         }
 
@@ -305,12 +323,16 @@ fun ChangeForm(
             usernameLabel = changeUiState.usernameLabel,
             isUsernameError = changeUiState.isUsernameError,
             onChangeUsernameClick = {
-                if (changeViewModel.changeUsername()) {
-                    changeViewModel.clearFields()
-                    changeViewModel.hideUsernameForm()
+                changeViewModel.viewModelScope.launch {
+                    if (changeViewModel.changeUsername()) {
+                        changeViewModel.clearFields()
+                        changeViewModel.hideUsernameForm()
+                    }
                 }
             },
-            onCancelClick = { changeViewModel.hideUsernameForm() }
+            onCancelClick = { changeViewModel.hideUsernameForm() },
+            isLoading = changeUiState.isUsernameLoading,
+            generalError = changeUiState.usernameGeneralError
         )
     }
 
@@ -340,12 +362,16 @@ fun ChangeForm(
             confirmPasswordLabel = changeUiState.confirmPasswordLabel,
             isConfirmPasswordError = changeUiState.isConfirmPasswordError,
             onChangePasswordClick = {
-                if (changeViewModel.changePassword()) {
-                    changeViewModel.clearFields()
-                    changeViewModel.hidePasswordForm()
+                changeViewModel.viewModelScope.launch {
+                    if (changeViewModel.changePassword()) {
+                        changeViewModel.clearFields()
+                        changeViewModel.hidePasswordForm()
+                    }
                 }
             },
-            onCancelClick = { changeViewModel.hidePasswordForm() }
+            onCancelClick = { changeViewModel.hidePasswordForm() },
+            isLoading = changeUiState.isPasswordLoading,
+            generalError = changeUiState.passwordGeneralError
         )
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,11 +93,10 @@ fun ChatroomApp() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
+                        .background(Color.Black.copy(alpha = 0.8f))
                 )
             }
 
-            // TODO: Use this feature
             ChangeForm(
                 changeViewModel = changeViewModel,
                 changeUiState = changeUiState
@@ -159,8 +159,6 @@ fun NavPoints(
                 onLoginClick = {
                     loginViewModel.viewModelScope.launch {
                         if (loginViewModel.login()) {
-                            // TODO: Store token and user info
-
                             loginViewModel.clearFields()
                             navController.navigate(ChatroomNavItems.HOME.name)
                         }
@@ -293,7 +291,17 @@ fun NavPoints(
 
         // Home
         composable(route = ChatroomNavItems.HOME.name) {
-            // TODO
+            // TODO: Get current user details
+            // TODO: Get user's joined room
+
+            // TODO: DEBUG REMOVE
+            Text(
+                text = loginViewModel.getUID()
+            )
+
+            // TODO: Logout
+            // TODO: change username
+            // TODO: change password
         }
 
         // TODO: Other screens

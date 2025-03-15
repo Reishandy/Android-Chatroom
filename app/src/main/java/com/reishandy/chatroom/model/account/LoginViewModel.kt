@@ -1,17 +1,17 @@
 package com.reishandy.chatroom.model.account
 
 import android.app.Application
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import com.reishandy.chatroom.data.LoginUiState
 import com.reishandy.chatroom.R
 import com.reishandy.chatroom.data.ApiResponseStatus
 import com.reishandy.chatroom.data.ApiResponseWrapper
-import com.reishandy.chatroom.data.TokensResponse
+import com.reishandy.chatroom.data.EncryptedPreferenceManager
+import com.reishandy.chatroom.data.LoginResponse
+import com.reishandy.chatroom.data.LoginUiState
 import com.reishandy.chatroom.network.ApiServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,8 @@ import kotlinx.coroutines.flow.update
 
 class LoginViewModel(
     application: Application,
-    private val apiRepository: ApiServiceRepository = ApiServiceRepository()
+    private val apiRepository: ApiServiceRepository = ApiServiceRepository(),
+    private val prefManager: EncryptedPreferenceManager = EncryptedPreferenceManager(application)
 ) : AndroidViewModel(application) {
     private val _uiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -48,6 +49,11 @@ class LoginViewModel(
     }
 
     // Main Flow
+    // TODO: DEBUG REMOVE
+    fun getUID(): String {
+        return prefManager.getUserId()?.toString() ?: "null"
+    }
+
     suspend fun login(): Boolean {
         if (!validateEmail() or !validatePassword()) return false
 
@@ -57,7 +63,7 @@ class LoginViewModel(
             )
         }
 
-        val response: ApiResponseWrapper<TokensResponse> = apiRepository.login(email, password)
+        val response: ApiResponseWrapper<LoginResponse> = apiRepository.login(email, password)
 
         when (response.status) {
             ApiResponseStatus.SUCCESS -> {
@@ -67,8 +73,10 @@ class LoginViewModel(
                     )
                 }
 
-                // TODO: Store refresh token, access token, and user information
-                Log.d("LoginViewModel", "Access Token: ${response.response?.access_token}; Refresh Token: ${response.response?.refresh_token}")
+                // Store tokens and user id in shared preferences (encrypted)
+                prefManager.saveRefreshTokens(response.response?.tokens!!.refresh_token)
+                prefManager.saveAccessToken(response.response.tokens.access_token)
+                prefManager.saveUserId(response.response.user_id)
 
                 return true
             }
@@ -115,8 +123,6 @@ class LoginViewModel(
                 return false
             }
         }
-
-        return true
     }
 
     // Helper

@@ -37,7 +37,6 @@ data class TokensResponse(
     val type: String
 )
 
-@Suppress("PropertyName", "PropertyName", "PropertyName", "PropertyName", "PropertyName")
 data class LoginResponse(
     val message: String,
     val tokens: TokensResponse,

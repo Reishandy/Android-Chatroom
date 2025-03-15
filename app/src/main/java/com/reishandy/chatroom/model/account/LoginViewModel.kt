@@ -1,4 +1,4 @@
-package com.reishandy.chatroom.model.auth
+package com.reishandy.chatroom.model.account
 
 import android.app.Application
 import android.util.Patterns
@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import com.reishandy.chatroom.data.LoginUiState
+import com.reishandy.chatroom.model.LoginUiState
 import com.reishandy.chatroom.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,6 +45,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
         // TODO: Implement login logic
 
+        // TODO: Store refresh token, access token, and user information
+
         return true
     }
 
@@ -63,7 +65,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun validatePassword(): Boolean {
-        val isPasswordValid: Boolean = password.length >= 8
+        val isPasswordValid: Boolean = password.length in 8..32
 
         _uiState.update {
             it.copy(

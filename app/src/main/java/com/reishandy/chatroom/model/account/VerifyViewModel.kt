@@ -1,11 +1,11 @@
-package com.reishandy.chatroom.model.auth
+package com.reishandy.chatroom.model.account
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
-import com.reishandy.chatroom.data.VerifyUiState
+import com.reishandy.chatroom.model.VerifyUiState
 import com.reishandy.chatroom.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

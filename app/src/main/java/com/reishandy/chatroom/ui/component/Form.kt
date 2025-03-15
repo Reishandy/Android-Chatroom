@@ -47,6 +47,121 @@ import com.reishandy.chatroom.ui.theme.ChatroomTheme
 import kotlinx.coroutines.delay
 
 @Composable
+fun Password(
+    modifier: Modifier = Modifier,
+    oldPasswordValue: String,
+    onOldPasswordValueChange: (String) -> Unit,
+    @StringRes oldPasswordLabel: Int,
+    isOldPasswordError: Boolean,
+    newPasswordValue: String,
+    onNewPasswordValueChange: (String) -> Unit,
+    @StringRes newPasswordLabel: Int,
+    isNewPasswordError: Boolean,
+    confirmPasswordValue: String,
+    onConfirmPasswordValueChange: (String) -> Unit,
+    @StringRes confirmPasswordLabel: Int,
+    isConfirmPasswordError: Boolean,
+    onChangePasswordClick: () -> Unit,
+    onCancelClick: () -> Unit
+) {
+    Wrapper(
+        modifier = modifier,
+        title = R.string.password_title,
+        textFields = {
+            Text(
+                text = stringResource(R.string.change_password),
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            CorrectOutlinedTextFields(
+                value = oldPasswordValue,
+                onValueChange = onOldPasswordValueChange,
+                label = oldPasswordLabel,
+                icon = Icons.Outlined.Key,
+                iconDescription = R.string.old_password,
+                isError = isOldPasswordError,
+                imeAction = ImeAction.Next,
+                isPassword = true
+            )
+
+            CorrectOutlinedTextFields(
+                value = newPasswordValue,
+                onValueChange = onNewPasswordValueChange,
+                label = newPasswordLabel,
+                icon = Icons.Outlined.Key,
+                iconDescription = R.string.new_password,
+                isError = isNewPasswordError,
+                imeAction = ImeAction.Next,
+                isPassword = true
+            )
+
+            CorrectOutlinedTextFields(
+                value = confirmPasswordValue,
+                onValueChange = onConfirmPasswordValueChange,
+                label = confirmPasswordLabel,
+                icon = Icons.Outlined.Key,
+                iconDescription = R.string.confirm_password,
+                isError = isConfirmPasswordError,
+                imeAction = ImeAction.Done,
+                isPassword = true
+            )
+        },
+        buttons = {
+            ButtonComplex(
+                primaryText = R.string.confirm,
+                onPrimaryClick = onChangePasswordClick,
+                secondaryText = R.string.cancel,
+                onSecondaryClick = onCancelClick
+            )
+        }
+    )
+}
+
+@Composable
+fun Username(
+    modifier: Modifier = Modifier,
+    usernameValue: String,
+    onUsernameValueChange: (String) -> Unit,
+    @StringRes usernameLabel: Int,
+    isUsernameError: Boolean,
+    onChangeUsernameClick: () -> Unit,
+    onCancelClick: () -> Unit
+) {
+    Wrapper(
+        modifier = modifier,
+        title = R.string.username_title,
+        textFields = {
+            Text(
+                text = stringResource(R.string.change_username),
+                modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_small)),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            CorrectOutlinedTextFields(
+                value = usernameValue,
+                onValueChange = onUsernameValueChange,
+                label = usernameLabel,
+                icon = Icons.Outlined.AccountCircle,
+                iconDescription = R.string.username,
+                isError = isUsernameError,
+                imeAction = ImeAction.Done
+            )
+        },
+        buttons = {
+            ButtonComplex(
+                primaryText = R.string.confirm,
+                onPrimaryClick = onChangeUsernameClick,
+                secondaryText = R.string.cancel,
+                onSecondaryClick = onCancelClick
+            )
+        }
+    )
+}
+
+@Composable
 fun Login(
     modifier: Modifier = Modifier,
     emailValue: String,
@@ -60,9 +175,9 @@ fun Login(
     onLoginClick: () -> Unit,
     onChangeToRegisterClick: () -> Unit
 ) {
-    AuthenticationWrapper(
+    Wrapper(
         modifier = modifier,
-        title = R.string.login,
+        title = R.string.login_title,
         textFields = {
             CorrectOutlinedTextFields(
                 value = emailValue,
@@ -79,7 +194,7 @@ fun Login(
                 onValueChange = onPasswordValueChange,
                 label = passwordLabel,
                 icon = Icons.Outlined.Key,
-                iconDescription = R.string.password,
+                iconDescription = R.string.password_title,
                 isError = isPasswordError,
                 imeAction = ImeAction.Done,
                 isPassword = true
@@ -118,16 +233,16 @@ fun Register(
     onRegisterClick: () -> Unit,
     onChangeToLoginClick: () -> Unit
 ) {
-    AuthenticationWrapper(
+    Wrapper(
         modifier = modifier,
-        title = R.string.register,
+        title = R.string.register_title,
         textFields = {
             CorrectOutlinedTextFields(
                 value = usernameValue,
                 onValueChange = onUsernameValueChange,
                 label = usernameLabel,
                 icon = Icons.Outlined.AccountCircle,
-                iconDescription = R.string.username,
+                iconDescription = R.string.username_title,
                 isError = isUsernameError,
                 imeAction = ImeAction.Next
             )
@@ -147,7 +262,7 @@ fun Register(
                 onValueChange = onPasswordValueChange,
                 label = passwordLabel,
                 icon = Icons.Outlined.Key,
-                iconDescription = R.string.password,
+                iconDescription = R.string.password_title,
                 isError = isPasswordError,
                 imeAction = ImeAction.Next,
                 isPassword = true
@@ -166,7 +281,7 @@ fun Register(
         },
         buttons = {
             ButtonComplex(
-                primaryText = R.string.register,
+                primaryText = R.string.send,
                 onPrimaryClick = onRegisterClick,
                 secondaryText = R.string.have_account,
                 onSecondaryClick = onChangeToLoginClick
@@ -198,9 +313,9 @@ fun Verify(
         }
     }
 
-    AuthenticationWrapper(
+    Wrapper(
         modifier = modifier,
-        title = R.string.verify,
+        title = R.string.verify_title,
         textFields = {
             Text(
                 text = stringResource(R.string.sent_to, emailSentTo),
@@ -221,7 +336,7 @@ fun Verify(
         },
         buttons = {
             ButtonComplex(
-                primaryText = R.string.verify,
+                primaryText = R.string.verify_title,
                 onPrimaryClick = onVerifyClick,
                 secondaryText = if (countdown > 0)
                     R.string.resend
@@ -244,7 +359,7 @@ fun Verify(
 }
 
 @Composable
-fun AuthenticationWrapper(
+fun Wrapper(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
     textFields: @Composable (() -> Unit),
@@ -388,6 +503,36 @@ fun CorrectOutlinedTextFields(
 fun AuthenticationMainPreview() {
     ChatroomTheme(darkTheme = true) {
         LazyColumn {
+            item {
+                Password(
+                    oldPasswordValue = "",
+                    onOldPasswordValueChange = {},
+                    oldPasswordLabel = R.string.old_password,
+                    isOldPasswordError = false,
+                    newPasswordValue = "",
+                    onNewPasswordValueChange = {},
+                    newPasswordLabel = R.string.new_password,
+                    isNewPasswordError = false,
+                    confirmPasswordValue = "",
+                    onConfirmPasswordValueChange = {},
+                    confirmPasswordLabel = R.string.confirm_password,
+                    isConfirmPasswordError = false,
+                    onChangePasswordClick = {},
+                    onCancelClick = {}
+                )
+            }
+
+            item {
+                Username(
+                    usernameValue = "",
+                    onUsernameValueChange = {},
+                    usernameLabel = R.string.username,
+                    isUsernameError = false,
+                    onChangeUsernameClick = {},
+                    onCancelClick = {}
+                )
+            }
+
             item {
                 Login(
                     emailValue = "",

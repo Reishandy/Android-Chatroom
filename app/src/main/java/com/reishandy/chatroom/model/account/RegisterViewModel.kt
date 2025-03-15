@@ -1,4 +1,4 @@
-package com.reishandy.chatroom.model.auth
+package com.reishandy.chatroom.model.account
 
 import android.app.Application
 import android.util.Patterns
@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.AndroidViewModel
-import com.reishandy.chatroom.data.RegisterUiState
+import com.reishandy.chatroom.model.RegisterUiState
 import com.reishandy.chatroom.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -93,7 +93,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun validatePassword(): Boolean {
-        val isPasswordValid: Boolean = password.length >= 6
+        val isPasswordValid: Boolean = password.length in 8..32
 
         _uiState.update {
             it.copy(

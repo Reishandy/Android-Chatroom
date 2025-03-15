@@ -1,6 +1,5 @@
 package com.reishandy.chatroom.network
 
-import android.util.Log
 import com.google.gson.Gson
 import com.reishandy.chatroom.data.ApiResponseStatus
 import com.reishandy.chatroom.data.ApiResponseWrapper

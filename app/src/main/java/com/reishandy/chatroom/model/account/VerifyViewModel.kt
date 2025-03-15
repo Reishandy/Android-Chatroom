@@ -1,21 +1,19 @@
 package com.reishandy.chatroom.model.account
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewModelScope
-import com.reishandy.chatroom.data.VerifyUiState
+import androidx.lifecycle.AndroidViewModel
 import com.reishandy.chatroom.R
 import com.reishandy.chatroom.data.ApiResponseStatus
 import com.reishandy.chatroom.data.ApiResponseWrapper
+import com.reishandy.chatroom.data.VerifyUiState
 import com.reishandy.chatroom.network.ApiServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class VerifyViewModel(
     application: Application,
